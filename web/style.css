@@ -342,7 +342,7 @@ h3 { margin: 0; font-size: 1.125rem; font-weight: 600; line-height: 1.2; }
 .datatable .tablewrap { margin-top: 8px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 4px 14px 8px; }
 
 /* tables */
-.tablewrap { overflow-x: auto; }
+.tablewrap { overflow: visible; }
 table { width: 100%; border-collapse: collapse; }
 th {
   padding: 6px 14px 8px 0;
