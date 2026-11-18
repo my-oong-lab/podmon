@@ -43,7 +43,7 @@ GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o pod
    Real environment variables and CLI flags always override `.env` values.
 4. Install and start:
    ```sh
-   install -D podmon ~/.local/bin/podmon
+   install -D podmon-linux-amd64 ~/.local/bin/podmon
    mkdir -p ~/.config/systemd/user
    cp deploy/podmon.service ~/.config/systemd/user/
    systemctl --user daemon-reload
