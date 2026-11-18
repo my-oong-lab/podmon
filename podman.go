@@ -545,10 +545,20 @@ func (p *podmanClient) Action(ctx context.Context, id, action string) error {
 	hc := newSocketClient(sock)
 	defer hc.CloseIdleConnections()
 
+	method := http.MethodPost
 	path := "/libpod/containers/" + id + "/" + action
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "http://podman"+podmanAPIBase+path, nil)
+	if action == "remove" {
+		method = http.MethodDelete
+		path = "/libpod/containers/" + id
+	}
+	req, err := http.NewRequestWithContext(ctx, method, "http://podman"+podmanAPIBase+path, nil)
 	if err != nil {
 		return err
+	}
+	if action == "remove" {
+		q := req.URL.Query()
+		q.Set("force", "true")
+		req.URL.RawQuery = q.Encode()
 	}
 	resp, err := hc.Do(req)
 	if err != nil {
