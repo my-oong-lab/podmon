@@ -526,6 +526,7 @@ var validActions = map[string]struct{}{
 	"pause":    {},
 	"unpause":  {},
 	"kill":     {},
+	"remove":   {},
 }
 
 // Action performs a container action via the Podman API socket.

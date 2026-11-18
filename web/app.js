@@ -436,40 +436,50 @@
   }
 
   function renderActions(c) {
-    const actions = ['start', 'stop', 'restart', 'pause', 'unpause', 'kill'];
     const state = c.state;
     let allowed = [];
 
     // Only show actions for non-infra containers when socket is available
     if (!c.infra && podmanHasSocket) {
       if (state === 'running') {
-        allowed = ['pause', 'restart', 'stop', 'kill'];
+        allowed = ['pause', 'restart', 'stop', 'kill', 'remove'];
       } else if (state === 'paused') {
-        allowed = ['unpause', 'restart', 'stop', 'kill'];
+        allowed = ['unpause', 'restart', 'stop', 'kill', 'remove'];
       } else if (state === 'exited' || state === 'stopped' || state === 'created') {
-        allowed = ['start', 'restart'];
+        allowed = ['start', 'restart', 'remove'];
       }
     }
 
     if (allowed.length === 0) {
-      return h('div', { class: 'act-group' });
+      return h('div', { class: 'act-menu' });
     }
 
-    const container = h('div', { class: 'act-group' });
-    const errNode = h('span', { class: 'act-err', hidden: true });
+    const menu = h('div', { class: 'act-menu' });
+    const trigger = h('button', {
+      class: 'act-trigger',
+      type: 'button',
+      'aria-label': 'Container actions',
+      'aria-haspopup': 'true',
+      'aria-expanded': 'false',
+      text: '⋮'
+    });
+    const dropdown = h('div', { class: 'act-dropdown', role: 'menu' });
 
     allowed.forEach((act) => {
-      const btn = h('button', {
-        class: 'act-btn act-' + act,
+      const item = h('button', {
+        class: 'act-item act-' + act,
         type: 'button',
+        role: 'menuitem',
         'data-action': act,
         'data-id': c.id,
         text: act.charAt(0).toUpperCase() + act.slice(1)
       });
-      btn.addEventListener('click', async () => {
-        // Disable all buttons in this row
-        container.querySelectorAll('.act-btn').forEach((b) => b.disabled = true);
+      item.addEventListener('click', async () => {
+        // Disable all items in this dropdown
+        dropdown.querySelectorAll('.act-item').forEach((b) => b.disabled = true);
         errNode.hidden = true;
+        dropdown.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
         try {
           const res = await fetch('/api/containers/' + c.id + '/' + act, {
             method: 'POST',
@@ -486,14 +496,42 @@
         } catch (e) {
           errNode.textContent = e.message;
           errNode.hidden = false;
-          // Re-enable buttons on error
-          container.querySelectorAll('.act-btn').forEach((b) => b.disabled = false);
+          // Re-enable items on error
+          dropdown.querySelectorAll('.act-item').forEach((b) => b.disabled = false);
         }
       });
-      container.append(btn);
+      dropdown.append(item);
     });
-    container.append(errNode);
-    return container;
+
+    const errNode = h('span', { class: 'act-err', hidden: true });
+    dropdown.append(errNode);
+
+    // Toggle dropdown on trigger click
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = dropdown.classList.toggle('open');
+      trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+      if (!menu.contains(e.target)) {
+        dropdown.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Close on Escape key
+    trigger.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        dropdown.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.focus();
+      }
+    });
+
+    menu.append(trigger, dropdown);
+    return menu;
   }
 
   function renderContainers(state) {
