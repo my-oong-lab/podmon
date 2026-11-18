@@ -405,8 +405,10 @@
       const badge = h('span', { class: 'net-badge ' + typeClass, text: n.type || 'LAN' });
       const ips = (n.ips || []).filter(ip => !ip.startsWith('fe80:')); // hide link-local ipv6
       const ipText = ips.length ? ips.join(', ') : '–';
+      const nameCell = h('td', { class: 'cell-title ct-name', text: n.name });
+      if (n.ssid) nameCell.append(h('span', { class: 'ct-sub', text: n.ssid }));
       return h('tr', null,
-        h('td', { class: 'cell-title ct-name', text: n.name }),
+        nameCell,
         h('td', { 'data-label': 'Type' }, badge),
         h('td', { 'data-label': 'IP Address', text: ipText }),
         h('td', { 'data-label': 'MAC', text: n.mac || '–' }),

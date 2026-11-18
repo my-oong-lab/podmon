@@ -3,8 +3,10 @@
 package main
 
 import (
+	"context"
 	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sort"
@@ -45,18 +47,20 @@ func includeIface(name string) bool {
 }
 
 // netIfaceDetails reads interface details via net.Interfaces().
-// Returns a map of interface name -> (type, IPs, MAC, state).
+// Returns a map of interface name -> (type, IPs, MAC, state, ssid).
 func netIfaceDetails() map[string]struct {
 	ifaceType string
 	ips       []string
 	mac       string
 	state     string
+	ssid      string
 } {
 	result := make(map[string]struct {
 		ifaceType string
 		ips       []string
 		mac       string
 		state     string
+		ssid      string
 	})
 	ifaces, err := net.Interfaces()
 	if err != nil {
@@ -83,26 +87,55 @@ func netIfaceDetails() map[string]struct {
 		}
 		// Determine type: Wi-Fi if wireless or name starts with wl
 		ifaceType := "LAN"
+		ssid := ""
 		// Check for wireless in sysfs
 		wirelessPath := filepath.Join("/sys/class/net", iface.Name, "wireless")
 		if _, err := os.Stat(wirelessPath); err == nil {
 			ifaceType = "Wi-Fi"
+			ssid = getSSID(iface.Name)
 		} else if strings.HasPrefix(iface.Name, "wl") {
 			ifaceType = "Wi-Fi"
+			ssid = getSSID(iface.Name)
 		}
 		result[iface.Name] = struct {
 			ifaceType string
 			ips       []string
 			mac       string
 			state     string
+			ssid      string
 		}{
 			ifaceType: ifaceType,
 			ips:       ips,
 			mac:       mac,
 			state:     state,
+			ssid:      ssid,
 		}
 	}
 	return result
+}
+
+// getSSID returns the connected Wi-Fi SSID using `iw dev <iface> link`.
+// Returns empty string if not connected or command fails.
+func getSSID(iface string) string {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, "iw", "dev", iface, "link")
+	out, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+	// Output format:
+	// Connected to aa:bb:cc:dd:ee:ff (on wlan0)
+	// 	SSID: MyNetwork
+	// 	freq: 2437
+	// 	...
+	for _, line := range strings.Split(string(out), "\n") {
+		line = strings.TrimSpace(line)
+		if strings.HasPrefix(line, "SSID:") {
+			return strings.TrimSpace(strings.TrimPrefix(line, "SSID:"))
+		}
+	}
+	return ""
 }
 
 func parseCPUStat(b []byte) (all cpuTimes, cores []cpuTimes) {
@@ -509,12 +542,14 @@ func (c *collector) collect(now time.Time) *System {
 				IPs:      []string{},
 				MAC:      "",
 				State:    "down",
+				SSID:     "",
 			}
 			if d, ok := details[name]; ok {
 				ni.Type = d.ifaceType
 				ni.IPs = d.ips
 				ni.MAC = d.mac
 				ni.State = d.state
+				ni.SSID = d.ssid
 			}
 			if p, ok := c.prevNet[name]; ok && dt > 0 {
 				ni.RxBps = round1(float64(delta(n.rx, p.rx)) / dt)

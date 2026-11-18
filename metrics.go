@@ -53,6 +53,7 @@ type NetIface struct {
 	IPs     []string `json:"ips"`      // assigned IP addresses
 	MAC     string   `json:"mac"`      // hardware address
 	State   string   `json:"state"`    // "up" or "down"
+	SSID    string   `json:"ssid"`     // Wi-Fi SSID (empty for LAN)
 	RxBps   float64  `json:"rxBps"`
 	TxBps   float64  `json:"txBps"`
 	RxTotal uint64   `json:"rxTotal"`
