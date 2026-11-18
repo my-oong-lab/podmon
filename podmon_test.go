@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -325,5 +326,138 @@ func TestSafeDevName(t *testing.T) {
 		if safeDevName(n) != want {
 			t.Errorf("safeDevName(%q) != %v", n, want)
 		}
+	}
+}
+
+func TestLoadEnvFile(t *testing.T) {
+	content := `
+# comment line
+PODMON_LISTEN=0.0.0.0:9090
+PODMON_USER=testuser  # inline comment
+PODMON_INTERVAL=5s
+EMPTY_VAL=
+`
+	f, err := os.CreateTemp(t.TempDir(), ".env")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.WriteString(content); err != nil {
+		t.Fatal(err)
+	}
+	f.Close()
+
+	got := map[string]string{}
+	if err := loadEnvFile(f.Name(), func(k, v string) error {
+		got[k] = v
+		return nil
+	}); err != nil {
+		t.Fatalf("loadEnvFile: %v", err)
+	}
+
+	if got["PODMON_LISTEN"] != "0.0.0.0:9090" {
+		t.Errorf("PODMON_LISTEN = %q", got["PODMON_LISTEN"])
+	}
+	if got["PODMON_USER"] != "testuser" {
+		t.Errorf("PODMON_USER = %q (inline comment not stripped)", got["PODMON_USER"])
+	}
+	if got["PODMON_INTERVAL"] != "5s" {
+		t.Errorf("PODMON_INTERVAL = %q", got["PODMON_INTERVAL"])
+	}
+	if _, ok := got["EMPTY_VAL"]; !ok {
+		t.Error("EMPTY_VAL key missing")
+	}
+	if got["EMPTY_VAL"] != "" {
+		t.Errorf("EMPTY_VAL = %q, want empty", got["EMPTY_VAL"])
+	}
+}
+
+func TestLoadEnvFileDoesNotOverwriteExisting(t *testing.T) {
+	t.Setenv("PODMON_USER", "already-set")
+
+	f, err := os.CreateTemp(t.TempDir(), ".env")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.WriteString("PODMON_USER=from-file\n"); err != nil {
+		t.Fatal(err)
+	}
+	f.Close()
+
+	called := false
+	if err := loadEnvFile(f.Name(), func(k, v string) error {
+		if k == "PODMON_USER" {
+			called = true
+		}
+		return nil
+	}); err != nil {
+		t.Fatalf("loadEnvFile: %v", err)
+	}
+	if called {
+		t.Error("setenv was called for a key already present in environment")
+	}
+}
+
+func TestLoadEnvFileMissing(t *testing.T) {
+	err := loadEnvFile("/nonexistent/.env", func(k, v string) error { return nil })
+	if err == nil {
+		t.Error("expected error for missing file, got nil")
+	}
+}
+
+func TestFindEnvFileFlag(t *testing.T) {
+	f, err := os.CreateTemp(t.TempDir(), ".env")
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.Close()
+	got := findEnvFile([]string{"-env", f.Name()}, func(string) string { return "" })
+	if got != f.Name() {
+		t.Errorf("findEnvFile with -env flag: %q, want %q", got, f.Name())
+	}
+	got = findEnvFile([]string{"-env=" + f.Name()}, func(string) string { return "" })
+	if got != f.Name() {
+		t.Errorf("findEnvFile with -env=... flag: %q, want %q", got, f.Name())
+	}
+}
+
+func TestFindEnvFileEnvVar(t *testing.T) {
+	f, err := os.CreateTemp(t.TempDir(), ".env")
+	if err != nil {
+		t.Fatal(err)
+	}
+	f.Close()
+	got := findEnvFile(nil, func(key string) string {
+		if key == "PODMON_ENV" {
+			return f.Name()
+		}
+		return ""
+	})
+	if got != f.Name() {
+		t.Errorf("findEnvFile PODMON_ENV: %q, want %q", got, f.Name())
+	}
+}
+
+func TestLoadConfigEnvFile(t *testing.T) {
+	dir := t.TempDir()
+	envFile := dir + "/.env"
+	pwFile := dir + "/password"
+	pw := "correct-horse-battery"
+
+	if err := os.WriteFile(pwFile, []byte(pw), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(envFile, []byte("PODMON_LISTEN=127.0.0.1:9191\nPODMON_PASSWORD_FILE="+pwFile+"\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, err := loadConfig([]string{"-env", envFile}, func(key string) string { return "" })
+	if err != nil {
+		t.Fatalf("loadConfig: %v", err)
+	}
+	if cfg.listen != "127.0.0.1:9191" {
+		t.Errorf("listen = %q, want 127.0.0.1:9191", cfg.listen)
+	}
+	if cfg.password != pw {
+		t.Errorf("password = %q, want %q", cfg.password, pw)
 	}
 }

@@ -33,7 +33,15 @@ GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o pod
    chmod 600 ~/.config/podmon/password
    cat ~/.config/podmon/password      # this is your login password
    ```
-3. Install and start:
+3. (Optional) create a `.env` file to configure the port and other options:
+   ```sh
+   cp .env.example ~/.config/podmon/.env
+   # edit ~/.config/podmon/.env — at minimum set PODMON_LISTEN and PODMON_PASSWORD_FILE
+   ```
+   podmon loads `.env` automatically from `~/.config/podmon/.env` or `./.env`.
+   Use `-env /path/to/file` or `PODMON_ENV` to point to a custom location.
+   Real environment variables and CLI flags always override `.env` values.
+4. Install and start:
    ```sh
    install -D podmon ~/.local/bin/podmon
    mkdir -p ~/.config/systemd/user
@@ -42,7 +50,7 @@ GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o pod
    systemctl --user enable --now podmon
    loginctl enable-linger "$USER"
    ```
-4. Open `http://<server-ip>:8080` and sign in as `admin`.
+5. Open `http://<server-ip>:8080` and sign in as `admin`.
 
 ## Security notes
 
@@ -74,16 +82,19 @@ GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o pod
 
 | Flag | Default | Meaning |
 |---|---|---|
-| `-listen` | `127.0.0.1:8080` | address and port |
-| `-user` | `admin` | login name (or `PODMON_USER`) |
-| `-tls-cert`, `-tls-key` | | serve HTTPS |
-| `-allowed-hosts` | | comma-separated Host allowlist |
-| `-podman-socket` | auto | Podman API socket path |
-| `-podman-bin` | from PATH | absolute path of `podman` for the fallback |
-| `-interval` | `2s` | sampling interval, 1s to 60s |
-| `-no-auth` | off | no login, loopback only |
+| `-listen` | `127.0.0.1:8080` | address and port (env `PODMON_LISTEN`) |
+| `-user` | `admin` | login name (env `PODMON_USER`) |
+| `-tls-cert`, `-tls-key` | | serve HTTPS (env `PODMON_TLS_CERT`, `PODMON_TLS_KEY`) |
+| `-allowed-hosts` | | comma-separated Host allowlist (env `PODMON_ALLOWED_HOSTS`) |
+| `-podman-socket` | auto | Podman API socket path (env `PODMON_SOCKET`) |
+| `-podman-bin` | from PATH | absolute path of `podman` for the fallback (env `PODMON_BIN`) |
+| `-interval` | `2s` | sampling interval, 1s to 60s (env `PODMON_INTERVAL`) |
+| `-no-auth` | off | no login, loopback only (env `PODMON_NO_AUTH=true`) |
+| `-env` | auto | path to `.env` config file (env `PODMON_ENV`) |
 
 The password comes from `PODMON_PASSWORD_FILE` (preferred) or `PODMON_PASSWORD`.
+
+`.env` file search order (first found wins): `-env` flag → `PODMON_ENV` → `~/.config/podmon/.env` → `./.env`.
 
 ## Tests
 
