@@ -245,10 +245,13 @@ func newSocketClient(sock string) *http.Client {
 	}
 }
 
+// podmanAPIBase is the minimum API version prefix accepted by Podman 4.x and 5.x.
+const podmanAPIBase = "/v4.0.0"
+
 // getJSON performs a GET against a fixed Podman API path and decodes at most
 // maxAPIBody bytes of JSON.
 func getJSON(ctx context.Context, hc *http.Client, path string, out any) error {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://podman"+path, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://podman"+podmanAPIBase+path, nil)
 	if err != nil {
 		return err
 	}
