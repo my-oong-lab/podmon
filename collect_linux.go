@@ -3,6 +3,7 @@
 package main
 
 import (
+	"net"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -41,6 +42,67 @@ func includeIface(name string) bool {
 		}
 	}
 	return true
+}
+
+// netIfaceDetails reads interface details via net.Interfaces().
+// Returns a map of interface name -> (type, IPs, MAC, state).
+func netIfaceDetails() map[string]struct {
+	ifaceType string
+	ips       []string
+	mac       string
+	state     string
+} {
+	result := make(map[string]struct {
+		ifaceType string
+		ips       []string
+		mac       string
+		state     string
+	})
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		return result
+	}
+	for _, iface := range ifaces {
+		if !includeIface(iface.Name) {
+			continue
+		}
+		// Get IPs
+		addrs, err := iface.Addrs()
+		var ips []string
+		if err == nil {
+			for _, a := range addrs {
+				ips = append(ips, a.String())
+			}
+		}
+		// Get MAC
+		mac := iface.HardwareAddr.String()
+		// Get state
+		state := "down"
+		if iface.Flags&net.FlagUp != 0 {
+			state = "up"
+		}
+		// Determine type: Wi-Fi if wireless or name starts with wl
+		ifaceType := "LAN"
+		// Check for wireless in sysfs
+		wirelessPath := filepath.Join("/sys/class/net", iface.Name, "wireless")
+		if _, err := os.Stat(wirelessPath); err == nil {
+			ifaceType = "Wi-Fi"
+		} else if strings.HasPrefix(iface.Name, "wl") {
+			ifaceType = "Wi-Fi"
+		}
+		result[iface.Name] = struct {
+			ifaceType string
+			ips       []string
+			mac       string
+			state     string
+		}{
+			ifaceType: ifaceType,
+			ips:       ips,
+			mac:       mac,
+			state:     state,
+		}
+	}
+	return result
 }
 
 func parseCPUStat(b []byte) (all cpuTimes, cores []cpuTimes) {
@@ -434,11 +496,26 @@ func (c *collector) collect(now time.Time) *System {
 
 	if b, err := readSmall("/proc/net/dev", 1<<18); err == nil {
 		cur := parseNetDev(b)
+		details := netIfaceDetails()
 		for name, n := range cur {
 			if !includeIface(name) {
 				continue
 			}
-			ni := NetIface{Name: sanitize(name, 32), RxTotal: n.rx, TxTotal: n.tx}
+			ni := NetIface{
+				Name:     sanitize(name, 32),
+				RxTotal:  n.rx,
+				TxTotal:  n.tx,
+				Type:     "LAN",
+				IPs:      []string{},
+				MAC:      "",
+				State:    "down",
+			}
+			if d, ok := details[name]; ok {
+				ni.Type = d.ifaceType
+				ni.IPs = d.ips
+				ni.MAC = d.mac
+				ni.State = d.state
+			}
 			if p, ok := c.prevNet[name]; ok && dt > 0 {
 				ni.RxBps = round1(float64(delta(n.rx, p.rx)) / dt)
 				ni.TxBps = round1(float64(delta(n.tx, p.tx)) / dt)

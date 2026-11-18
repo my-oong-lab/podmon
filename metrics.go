@@ -48,11 +48,15 @@ type DiskIO struct {
 }
 
 type NetIface struct {
-	Name    string  `json:"name"`
-	RxBps   float64 `json:"rxBps"`
-	TxBps   float64 `json:"txBps"`
-	RxTotal uint64  `json:"rxTotal"`
-	TxTotal uint64  `json:"txTotal"`
+	Name    string   `json:"name"`
+	Type    string   `json:"type"`     // "LAN" or "Wi-Fi"
+	IPs     []string `json:"ips"`      // assigned IP addresses
+	MAC     string   `json:"mac"`      // hardware address
+	State   string   `json:"state"`    // "up" or "down"
+	RxBps   float64  `json:"rxBps"`
+	TxBps   float64  `json:"txBps"`
+	RxTotal uint64   `json:"rxTotal"`
+	TxTotal uint64   `json:"txTotal"`
 }
 
 type Temp struct {

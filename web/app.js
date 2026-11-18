@@ -394,6 +394,25 @@
     }
 
     renderStorage(disks, temps);
+    renderNetwork(sys.net || []);
+  }
+
+  function renderNetwork(ifaces) {
+    const body = $('net-body');
+    if (!body) return;
+    body.replaceChildren(...ifaces.map((n) => {
+      const typeClass = (n.type || 'lan').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const badge = h('span', { class: 'net-badge ' + typeClass, text: n.type || 'LAN' });
+      const ips = (n.ips || []).filter(ip => !ip.startsWith('fe80:')); // hide link-local ipv6
+      const ipText = ips.length ? ips.join(', ') : '–';
+      return h('tr', null,
+        h('td', { class: 'cell-title ct-name', text: n.name }),
+        h('td', { 'data-label': 'Type' }, badge),
+        h('td', { 'data-label': 'IP Address', text: ipText }),
+        h('td', { 'data-label': 'MAC', text: n.mac || '–' }),
+        h('td', { class: 'num', 'data-label': 'In', text: fmtRate(n.rxBps) }),
+        h('td', { class: 'num', 'data-label': 'Out', text: fmtRate(n.txBps) }));
+    }));
   }
 
   function renderStorage(disks, temps) {
