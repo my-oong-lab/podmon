@@ -1,0 +1,28 @@
+# Install as a *user* service so podmon can read your rootless Podman containers:
+#   mkdir -p ~/.config/systemd/user && cp podmon.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload && systemctl --user enable --now podmon
+#   loginctl enable-linger "$USER"      # keep it running after you log out
+[Unit]
+Description=podmon server dashboard
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/podmon -listen 0.0.0.0:8080 -podman-socket %t/podman/podman.sock
+Environment=PODMON_PASSWORD_FILE=%h/.config/podmon/password
+Restart=on-failure
+RestartSec=5
+
+# Hardening. These are all unprivileged options; if your systemd rejects one
+# in a user unit, remove that line.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryMax=96M
+
+[Install]
+WantedBy=default.target

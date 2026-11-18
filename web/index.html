@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>podmon</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.css">
+<script src="/app.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="nameplate">
+    <div class="ident">
+      <h1><span id="live" class="live" data-state="connecting" role="img" aria-label="Connecting"></span><span id="host">podmon</span></h1>
+      <p id="sysinfo" class="sysinfo"><span class="sys-item">Waiting for the first reading</span></p>
+    </div>
+    <dl class="vitals">
+      <div><dt>Uptime</dt><dd id="uptime">–</dd></div>
+      <div><dt>Load average</dt><dd id="load">–</dd></div>
+      <div id="tempBox" hidden><dt>Hottest sensor</dt><dd id="temp">–</dd></div>
+      <div><dt>Updated</dt><dd id="updated">–</dd></div>
+    </dl>
+  </header>
+
+  <noscript><p class="notice">This dashboard needs JavaScript to draw its live readings.</p></noscript>
+
+  <main>
+    <section class="rack panel" aria-labelledby="h-now">
+      <h2 id="h-now" class="sr-only">Resource use right now</h2>
+
+      <div class="block">
+        <div class="meter">
+          <div class="m-head"><h3>Processor</h3><p class="m-detail" id="cpu-detail"></p></div>
+          <div class="bar" id="cpu-bar"></div>
+          <p class="readout"><span id="cpu-val">–</span><span class="unit">%</span></p>
+        </div>
+        <div class="cores" id="cores"></div>
+      </div>
+
+      <div class="block">
+        <div class="meter">
+          <div class="m-head"><h3>Memory</h3><p class="m-detail" id="mem-detail"></p></div>
+          <div class="bar" id="mem-bar"></div>
+          <p class="readout"><span id="mem-val">–</span><span class="unit">%</span></p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="meter">
+          <div class="m-head"><h3>Disk</h3><p class="m-detail" id="disk-detail"></p></div>
+          <div class="bar" id="disk-bar"></div>
+          <p class="readout"><span id="disk-val">–</span><span class="unit">%</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-hist">
+      <div class="section-head"><h2 id="h-hist">Last 10 minutes</h2></div>
+      <div class="trends" id="charts"></div>
+      <details class="datatable" id="dataDetails">
+        <summary>Show chart data as a table</summary>
+        <div class="tablewrap" tabindex="0" role="region" aria-label="Chart data table">
+          <table>
+            <thead><tr>
+              <th scope="col">Time</th>
+              <th scope="col" class="num">Processor</th>
+              <th scope="col" class="num">Memory</th>
+              <th scope="col" class="num">Network in</th>
+              <th scope="col" class="num">Network out</th>
+              <th scope="col" class="num">Disk read</th>
+              <th scope="col" class="num">Disk write</th>
+            </tr></thead>
+            <tbody id="dataBody"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <section aria-labelledby="h-ct">
+      <div class="section-head">
+        <h2 id="h-ct">Containers</h2>
+        <p class="ct-summary" id="ct-summary"></p>
+        <label class="check"><input type="checkbox" id="showStopped"><span>Show stopped containers</span></label>
+      </div>
+      <div class="panel">
+        <p class="notice" id="ct-notice" hidden></p>
+        <div class="tablewrap" tabindex="0" role="region" aria-label="Containers table">
+          <table id="ct-table" class="stack">
+            <thead><tr>
+              <th scope="col">Name</th>
+              <th scope="col">Image</th>
+              <th scope="col">State</th>
+              <th scope="col" class="num">Processor</th>
+              <th scope="col" class="num">Memory</th>
+              <th scope="col">Ports</th>
+              <th scope="col">Status</th>
+            </tr></thead>
+            <tbody id="ct-body"></tbody>
+          </table>
+        </div>
+        <p class="empty" id="ct-empty" hidden></p>
+        <p class="hint" id="ct-hint" hidden></p>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-st">
+      <div class="section-head"><h2 id="h-st">Storage and sensors</h2></div>
+      <div class="panel">
+        <div class="tablewrap" tabindex="0" role="region" aria-label="Storage table">
+          <table class="stack">
+            <thead><tr>
+              <th scope="col">Mount</th>
+              <th scope="col">Device</th>
+              <th scope="col">Type</th>
+              <th scope="col" class="num">Used</th>
+              <th scope="col" class="num">Free</th>
+              <th scope="col">Usage</th>
+            </tr></thead>
+            <tbody id="disk-body"></tbody>
+          </table>
+        </div>
+        <ul class="temps" id="temps" hidden></ul>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+Barlow Semi Condensed, Latin subset, weights 500/600/700 (WOFF2).
+Source: npm package @fontsource/barlow-semi-condensed@5.3.0 (files/ directory), licence SIL OFL 1.1 (see LICENSE).
+Copied unmodified. To verify, run 'npm pack @fontsource/barlow-semi-condensed@5.3.0', unpack it, and compare:
+
+0d7513795eaf8fdab7f340144841bd2d9fac7d9303c03aa6b525a2c908e9b371  barlow-semi-condensed-latin-500-normal.woff2
+f158417e9207b5362f9b71a2fe779ce5bb836ad972f38445c3163af39d2c998d  barlow-semi-condensed-latin-600-normal.woff2
+fb958c8c20a05552ac8a85d925d96028d52565792650e941a5fe96b6997aa5cb  barlow-semi-condensed-latin-700-normal.woff2

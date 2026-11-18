@@ -1,0 +1,47 @@
+{
+  "run_id": "podmon-run-1",
+  "repo": "podmon",
+  "target": "/home/claude/podmon",
+  "source_ref": "unversioned; sha256-of-sorted-file-hashes c423b136900784bb (not a git repository, so no commit and no dirty flag)",
+  "profile": "quick",
+  "scope_paths": [
+    "."
+  ],
+  "budget": 16,
+  "execution_policy": "sandboxed-source-and-local-only",
+  "execution_note": "Audit agents perform source review only and execute no target code. No OS-enforced sandbox was verified for this run, so any lead that needs target execution is recorded as needs_validation with that blocker.",
+  "selected_companion_files": [
+    "WEB-PROTOCOL-AND-AUTH.md",
+    "CLIENT-SIDE.md",
+    "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md",
+    "DESKTOP-MOBILE-AND-LOCAL-IPC.md",
+    "CLOUD-AND-DEPLOYMENT.md"
+  ],
+  "prior_runs": [],
+  "shared_file_owners": {
+    "run-metadata.json": "parent",
+    "architecture.md": "parent",
+    "coverage-ledger.json": "parent",
+    "findings.json": "parent",
+    "REPORT.md": "parent",
+    "FINDINGS-DETAIL.md": "parent",
+    "NEEDS-VALIDATION.md": "parent"
+  },
+  "run_status": "complete",
+  "budget_plan": {
+    "budget": 16,
+    "agents_returning_results": 8,
+    "aborted_launches_counted": 8,
+    "breakdown": {
+      "reconnaissance": 4,
+      "hunters": 3,
+      "final_critic": 1,
+      "verifiers": 0
+    }
+  },
+  "deviations": [
+    "Hunter prompts are delivered as a file (agents/<id>/prompt.md) that each hunter must read in full, instead of being pasted into the delegation message; the file holds the blocks verbatim."
+  ],
+  "coverage_statement": "partial pass: quick profile, 7 units covered, 6 deferred (quick_profile_final_critic); not a complete-coverage claim",
+  "post_audit_source_changes": "limiter atomicity and eviction order (server.go), bounded statfs and underflow guard (collect_linux.go), safeDevName, sanitize separators, README notes, third_party SOURCE.txt; not re-audited"
+}

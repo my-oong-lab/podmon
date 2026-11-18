@@ -1,0 +1,1256 @@
+[
+  {
+    "coverage_id": "Process%20lifecycle%3A%20sampler%20priming%20at%20startup%2C%20sampler%20goroutine%2C%20and%20Statfs%20on%20realFS%20mounts%20including%20fuseblk::metrics.go%23newSampler%20and%20collect_linux.go%23readDisks::profile%2Fquick%2Fall-in-scope-subsystems::RESOURCE-EXHAUSTION-AND-AVAILABILITY.md%23Reachable%20fatal%20error%20or%20deadlock",
+    "canonical_refs": {
+      "surface": "Process lifecycle: sampler priming at startup, sampler goroutine, and Statfs on realFS mounts including fuseblk",
+      "boundary": "metrics.go#newSampler and collect_linux.go#readDisks",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Reachable fatal error or deadlock"
+    },
+    "surface": "Process lifecycle: sampler priming at startup, sampler goroutine, and Statfs on realFS mounts including fuseblk",
+    "boundary": "metrics.go#newSampler and collect_linux.go#readDisks",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Reachable fatal error or deadlock (sampler wedge, startup and error lifecycle)",
+    "starting_paths": [
+      "metrics.go",
+      "collect_linux.go",
+      "main.go"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Reachable fatal error or deadlock",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Poison-record and head-of-line blocking",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Detached work after cancellation"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+        "reason": "no HTTP parsing in this unit"
+      },
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "no browser path"
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "no unit-file or secret path"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "deferred",
+    "agent_id": null,
+    "reviewed_paths": [],
+    "local_checks": [],
+    "result_fingerprints": [],
+    "unresolved": [
+      "quick_profile_final_critic: Critic: lifecycle modes startup, shutdown and error fallback are unowned. A wedged fuseblk mount blocks the only sampler goroutine and the synchronous startup sample before the listener exists; ctx cancellation cannot interrupt an in-progress Statfs."
+    ]
+  },
+  {
+    "coverage_id": "Vendored%20third-party%20binary%20assets%20embedded%20and%20served%3A%20web%2Ffonts%2F%2A.woff2%20and%20third_party%2Fbarlow-semi-condensed%2FLICENSE::main.go%23webFS%20embed%20and%20server.go%23loadStatic::profile%2Fquick%2Fall-in-scope-subsystems::SUPPLY-CHAIN-AND-RELEASE.md%23Build-context%20inclusion",
+    "canonical_refs": {
+      "surface": "Vendored third-party binary assets embedded and served: web/fonts/*.woff2 and third_party/barlow-semi-condensed/LICENSE",
+      "boundary": "main.go#webFS embed and server.go#loadStatic",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "SUPPLY-CHAIN-AND-RELEASE.md#Build-context inclusion"
+    },
+    "surface": "Vendored third-party binary assets embedded and served: web/fonts/*.woff2 and third_party/barlow-semi-condensed/LICENSE",
+    "boundary": "main.go#webFS embed and server.go#loadStatic",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Build-context inclusion (vendored binary assets)",
+    "starting_paths": [
+      "web/fonts",
+      "third_party/barlow-semi-condensed/LICENSE",
+      "web/style.css",
+      "server.go",
+      "main.go",
+      "README.md"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Obvious things",
+    "selected_companion_blocks": [
+      "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+      "SUPPLY-CHAIN-AND-RELEASE.md#Build-context inclusion",
+      "CLIENT-SIDE.md#Core discipline"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model code"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "no local socket in this unit"
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "no deployment unit path"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "deferred",
+    "agent_id": null,
+    "reviewed_paths": [],
+    "local_checks": [],
+    "result_fingerprints": [],
+    "unresolved": [
+      "quick_profile_final_critic: Critic: the repository vendors three third-party binary woff2 files embedded by //go:embed web and served to authenticated browsers, yet all units excluded the supply-chain companion as 'no dependencies, CI, release or update mechanism'. Binary provenance cannot be established offline and is an offline limit, not a finding."
+    ]
+  },
+  {
+    "coverage_id": "collect_linux.go%23reads%20of%20%2Fproc%2C%20%2Fsys%20and%20%2Fetc%2Fos-release::util.go%23readSmall::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "collect_linux.go#reads of /proc, /sys and /etc/os-release",
+      "boundary": "util.go#readSmall",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "collect_linux.go#reads of /proc, /sys and /etc/os-release",
+    "boundary": "util.go#readSmall",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+      "collect_linux.go",
+      "util.go",
+      "metrics.go"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Unbounded buffering and cardinality",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#File descriptor, handle, and temporary-resource leaks",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Reachable fatal error or deadlock",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Superlinear parsing, matching, or evaluation",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Universal moves",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model, prompt, tool or agent code exists in the repository"
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "pure Go with no unsafe, cgo or binary parsing beyond bounded text procfs fields"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no RPC, broker, queue or webhook; the Podman REST client is covered by the local-IPC companion"
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+        "reason": "one shared principal, no tenants and no stored data beyond an in-memory ring buffer"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "no dependencies, CI, release or update mechanism in the repository"
+      },
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+        "reason": "this unit's boundary does not accept HTTP requests or authenticate"
+      },
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "this unit has no browser-side code path"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "this unit has no local socket or privileged-file boundary"
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "this unit has no deployment unit, secret store or configuration-precedence path"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [
+      {
+        "wave": 1,
+        "status": "covered",
+        "agent_id": "hunter-ingest",
+        "reviewed_paths": [
+          "collect_linux.go",
+          "metrics.go",
+          "util.go"
+        ],
+        "local_checks": [
+          {
+            "agent_id": "hunter-ingest",
+            "reviewed_paths": [
+              "collect_linux.go",
+              "util.go"
+            ],
+            "invariant": "Every procfs, sysfs and os-release read must use a fixed path or a validated one, be size-bounded, close its descriptor, and not allow traversal or unbounded growth",
+            "method": "source",
+            "result": "readSmall (util.go:42-49) opens the file, defers Close and reads through io.LimitReader, so each read is bounded and no descriptor leaks. All paths are constants, except the hwmon glob results and /sys/block/<name>. Names reaching /sys/block go through safeDevName (alnum, '-', '_', '!', '.', max 64) after a kernel-name prefix filter. A bare '.' or '..' would be accepted, but those names cannot come from /proc/diskstats, which the kernel controls, so there is no traversal. hwmon paths come from filepath.Glob on kernel-controlled sysfs. Mount paths from /proc/mounts reach only syscall.Statfs, which is read-only and limited to the realFS block-backed types; network and FUSE filesystems are excluded to avoid hangs. Free-text fields are sanitized. Temps are capped at 16, and parsers are linear with no regex. The parsers use bounds-checked indexing with length guards (len(f)<5, <16, <10), so a malformed procfs line cannot panic. Unsigned arithmetic is guarded (avail>total clamped, delta handles wraps).",
+            "artifact": null
+          },
+          {
+            "agent_id": "hunter-ingest",
+            "reviewed_paths": [
+              "metrics.go",
+              "collect_linux.go"
+            ],
+            "invariant": "The sampler cache and ring buffer must stay bounded and independent of request volume",
+            "method": "source",
+            "result": "The sampler is a single goroutine on a ticker. Handlers only read the cached *System, which is immutable once published. The history ring is a fixed 300-point array with modular indexing, so there is no growth. A statfs on a wedged block device could stall the single sampler loop, but that requires a host fault and no attacker input, so it is a hardening note only.",
+            "artifact": null
+          }
+        ],
+        "result_fingerprints": [],
+        "unresolved": [],
+        "reassignment_reason": "Critic: realFS (collect_linux.go:23-27) includes fuseblk, whose mount path reaches syscall.Statfs (:238); a wedged mount blocks the only sampler goroutine with no timeout. newSampler primes with a synchronous sample() before the listener exists (metrics.go:112-113), so the same hang blocks startup. Shutdown cannot interrupt an in-progress Statfs. The claim that (st.Blocks - st.Bfree) * bs is guarded is incorrect: only the percent is clamped (:243)."
+      }
+    ],
+    "wave": 2,
+    "status": "deferred",
+    "agent_id": null,
+    "reviewed_paths": [],
+    "local_checks": [],
+    "result_fingerprints": [],
+    "unresolved": [
+      "quick_profile_final_critic: Critic: realFS (collect_linux.go:23-27) includes fuseblk, whose mount path reaches syscall.Statfs (:238); a wedged mount blocks the only sampler goroutine with no timeout. newSampler primes with a synchronous sample() before the listener exists (metrics.go:112-113), so the same hang blocks startup. Shutdown cannot interrupt an in-progress Statfs. The claim that (st.Blocks - st.Bfree) * bs is guarded is incorrect: only the percent is clamped (:243)."
+    ],
+    "assignment_priority": 6,
+    "assignment_rationale": "priority: unauthenticated/lowest-trust surfaces first, then credentials/deployment, then lower-trust data ingestion, then browser-side",
+    "hardening": [
+      "collect_linux.go safeDevName accepts the names '.' and '..' (its character set includes '.'). Kernel-sourced /proc/diskstats cannot emit them, so there is no impact, but an explicit rejection would make the /sys/block path construction self-evidently safe.",
+      "collect_linux.go readDisks calls syscall.Statfs synchronously in the single sampler goroutine. A wedged block device would stall sampling, so a per-call timeout or separate goroutine would improve resilience; this needs a host fault, not attacker input."
+    ]
+  },
+  {
+    "coverage_id": "deploy%2Fpodmon.service%23ExecStart%20and%20hardening%20directives::deploy%2Fpodmon.service%23service%20sandbox%20directives::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Obvious%20things",
+    "canonical_refs": {
+      "surface": "deploy/podmon.service#ExecStart and hardening directives",
+      "boundary": "deploy/podmon.service#service sandbox directives",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Obvious things"
+    },
+    "surface": "deploy/podmon.service#ExecStart and hardening directives",
+    "boundary": "deploy/podmon.service#service sandbox directives",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Obvious things",
+    "starting_paths": [
+      "deploy/podmon.service",
+      "README.md",
+      "go.mod",
+      "main.go",
+      "web/fonts",
+      "third_party"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Obvious things",
+    "selected_companion_blocks": [
+      "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+      "CLOUD-AND-DEPLOYMENT.md#Security-control precedence drift",
+      "CLOUD-AND-DEPLOYMENT.md#Secret exposure across workload boundaries",
+      "CLOUD-AND-DEPLOYMENT.md#Unexpected service or management-plane reachability",
+      "CLOUD-AND-DEPLOYMENT.md#Universal moves",
+      "CLOUD-AND-DEPLOYMENT.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model, prompt, tool or agent code exists in the repository"
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "pure Go with no unsafe, cgo or binary parsing beyond bounded text procfs fields"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no RPC, broker, queue or webhook; the Podman REST client is covered by the local-IPC companion"
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+        "reason": "one shared principal, no tenants and no stored data beyond an in-memory ring buffer"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "no dependencies, CI, release or update mechanism in the repository"
+      },
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+        "reason": "this unit's boundary does not accept HTTP requests or authenticate"
+      },
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "this unit has no browser-side code path"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "this unit has no work-amplification or accumulation path distinct from its selected classes"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "this unit has no local socket or privileged-file boundary"
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "the app is read-only: it has no export, import, search, preview or webhook feature (server.go routes)"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-auth-http",
+    "reviewed_paths": [
+      "README.md",
+      "deploy/podmon.service",
+      "go.mod",
+      "main.go"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-auth-http",
+        "reviewed_paths": [
+          "deploy/podmon.service",
+          "main.go",
+          "README.md"
+        ],
+        "invariant": "Shipped unit does not disable authentication or expose an unprotected sensitive endpoint, and its flags do not drift from main.go validation",
+        "method": "source",
+        "result": "ExecStart uses -listen 0.0.0.0:8080 without -no-auth. Authentication is therefore mandatory, and startup fails without a 12+ character password from the 0600 password file. The only unauthenticated route is /healthz, which returns a constant. There is no debug, admin, metrics or config endpoint. No dynamic exec, eval, redirect, CORS or cookie code exists in server.go. The plain-HTTP warning is emitted at startup and documented in the README. The shipped unit has no TLS and no -allowed-hosts, which is a deployment choice (LAN) and not a code defect.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-auth-http",
+        "reviewed_paths": [
+          "deploy/podmon.service",
+          "go.mod"
+        ],
+        "invariant": "Sandbox directives are present and consistent; there are no secrets or test credentials in the repo",
+        "method": "source",
+        "result": "NoNewPrivileges, PrivateTmp, ProtectSystem=strict, ProtectHome=read-only, RestrictAddressFamilies, RestrictNamespaces, LockPersonality and MemoryMax=96M are set, and the unit comments tell users to remove unsupported lines. The tree contains no .env, key or credential files. Dependencies: stdlib only (go.mod has no requires). Whether the user-unit hardening is actually applied is deployment-observed and cannot be established from source.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "assignment_priority": 4,
+    "assignment_rationale": "priority: unauthenticated/lowest-trust surfaces first, then credentials/deployment, then lower-trust data ingestion, then browser-side",
+    "hardening": [
+      "deploy/podmon.service: ships plain HTTP on 0.0.0.0:8080 with Basic auth, so the credential is sent in clear text across the network unless a TLS proxy or -tls-cert is added. This is documented in the README and warned about at startup."
+    ],
+    "bookkeeping_note": "unit-level reviewed_paths set to the union of check paths; unowned claimed paths dropped: [\"server.go\"]"
+  },
+  {
+    "coverage_id": "main.go%23loadConfig%20credentials%20%28flags%2C%20env%2C%20password%20file%29::main.go%23readPasswordFile::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Cryptography%20and%20secrets",
+    "canonical_refs": {
+      "surface": "main.go#loadConfig credentials (flags, env, password file)",
+      "boundary": "main.go#readPasswordFile",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Cryptography and secrets"
+    },
+    "surface": "main.go#loadConfig credentials (flags, env, password file)",
+    "boundary": "main.go#readPasswordFile",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Cryptography and secrets",
+    "starting_paths": [
+      "main.go",
+      "server.go",
+      "deploy/podmon.service",
+      "README.md"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Cryptography and secrets",
+    "selected_companion_blocks": [
+      "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+      "CLOUD-AND-DEPLOYMENT.md#Secret exposure across workload boundaries",
+      "CLOUD-AND-DEPLOYMENT.md#Security-control precedence drift",
+      "CLOUD-AND-DEPLOYMENT.md#Universal moves",
+      "CLOUD-AND-DEPLOYMENT.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model, prompt, tool or agent code exists in the repository"
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "pure Go with no unsafe, cgo or binary parsing beyond bounded text procfs fields"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no RPC, broker, queue or webhook; the Podman REST client is covered by the local-IPC companion"
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+        "reason": "one shared principal, no tenants and no stored data beyond an in-memory ring buffer"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "no dependencies, CI, release or update mechanism in the repository"
+      },
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+        "reason": "this unit's boundary does not accept HTTP requests or authenticate"
+      },
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "this unit has no browser-side code path"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "this unit has no work-amplification or accumulation path distinct from its selected classes"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "this unit has no local socket or privileged-file boundary"
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "the app is read-only: it has no export, import, search, preview or webhook feature (server.go routes)"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-auth-http",
+    "reviewed_paths": [
+      "README.md",
+      "deploy/podmon.service",
+      "main.go",
+      "server.go"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-auth-http",
+        "reviewed_paths": [
+          "main.go",
+          "README.md"
+        ],
+        "invariant": "Password source is a single, validated, non-default secret; there are no hardcoded or fallback credentials",
+        "method": "source",
+        "result": "The password comes only from PODMON_PASSWORD_FILE or PODMON_PASSWORD (setting both is rejected). The default user is 'admin' but a 12+ character password is mandatory unless -no-auth is used on loopback. -no-auth with a configured password is rejected. The user name is checked for length and ':' / CR / LF. No hardcoded credentials were found. There is no flag for the password, so it is not exposed in argv. The password file is stat'd and must be a regular file with perms 0600 or tighter. It is read with readSmall (4096 byte cap).",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-auth-http",
+        "reviewed_paths": [
+          "server.go",
+          "deploy/podmon.service"
+        ],
+        "invariant": "The secret is not exposed in logs, responses or the unit file, and comparison does not leak through timing",
+        "method": "source",
+        "result": "The password is not logged (the lockout log prints only the client key). The unit file references the file path only (PODMON_PASSWORD_FILE) and carries no secret. Password hashes held in memory are never served. Comparison is constant time over fixed-size SHA-256 digests. In-memory passwords in the PODMON_PASSWORD env var are visible to the same uid and root via /proc/<pid>/environ, which is the documented non-preferred option.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "assignment_priority": 3,
+    "assignment_rationale": "priority: unauthenticated/lowest-trust surfaces first, then credentials/deployment, then lower-trust data ingestion, then browser-side",
+    "hardening": [],
+    "bookkeeping_note": "unit-level reviewed_paths set to the union of check paths; unowned claimed paths dropped: []"
+  },
+  {
+    "coverage_id": "main.go%23run%20TLS%20listener%20%28-tls-cert%2F-tls-key%2C%20tls.Config%2C%20ListenAndServeTLS%2C%20plain-HTTP%20fallback%29::main.go%23run%20transport%20selection%20and%20server.go%23securityHeaders%20HSTS::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Cryptography%20and%20secrets",
+    "canonical_refs": {
+      "surface": "main.go#run TLS listener (-tls-cert/-tls-key, tls.Config, ListenAndServeTLS, plain-HTTP fallback)",
+      "boundary": "main.go#run transport selection and server.go#securityHeaders HSTS",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Cryptography and secrets"
+    },
+    "surface": "main.go#run TLS listener (-tls-cert/-tls-key, tls.Config, ListenAndServeTLS, plain-HTTP fallback)",
+    "boundary": "main.go#run transport selection and server.go#securityHeaders HSTS",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Cryptography and secrets (transport confidentiality, TLS key handling)",
+    "starting_paths": [
+      "main.go",
+      "server.go",
+      "deploy/podmon.service",
+      "README.md"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Cryptography and secrets",
+    "selected_companion_blocks": [
+      "WEB-PROTOCOL-AND-AUTH.md#API-key exposure and unsafe transport",
+      "CLOUD-AND-DEPLOYMENT.md#Secret exposure across workload boundaries",
+      "CLOUD-AND-DEPLOYMENT.md#Security-control precedence drift",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Pre-authentication work imbalance"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "unit concerns the listener and key files, not browser code"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "no local socket boundary in this unit"
+      },
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model or agent code in the repository"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "deferred",
+    "agent_id": null,
+    "reviewed_paths": [],
+    "local_checks": [],
+    "result_fingerprints": [],
+    "unresolved": [
+      "quick_profile_final_critic: Critic: no unit owns the TLS mode. main.go:176-177 sets only MinVersion TLS 1.2 and main.go:195 calls ListenAndServeTLS; -tls-key mode and ownership are never checked, unlike the password file (main.go:59-75). Not asked whether HTTP/2, enabled by default under TLS, invalidates pre-auth bounds derived for HTTP/1 only (ReadHeaderTimeout, MaxHeaderBytes, the 64-slot semaphore taken after header parsing, server.go:176-187). HSTS is emitted only when tlsCert is set (server.go:141)."
+    ]
+  },
+  {
+    "coverage_id": "podman.go%23Podman%20API%20unix%20socket%20and%20podman%20CLI%20output::util.go%23sanitize%20and%20podman.go%23validSocket::profile%2Fquick%2Fall-in-scope-subsystems::DESKTOP-MOBILE-AND-LOCAL-IPC.md%23IPC%20peer-authentication%20gaps",
+    "canonical_refs": {
+      "surface": "podman.go#Podman API unix socket and podman CLI output",
+      "boundary": "util.go#sanitize and podman.go#validSocket",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#IPC peer-authentication gaps"
+    },
+    "surface": "podman.go#Podman API unix socket and podman CLI output",
+    "boundary": "util.go#sanitize and podman.go#validSocket",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "IPC peer-authentication gaps",
+    "starting_paths": [
+      "podman.go",
+      "util.go",
+      "main.go"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#IPC peer-authentication gaps",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Claimed principal versus channel identity",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#IPC lifecycle and correlation confusion",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Local file ownership and TOCTOU",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Universal moves",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model, prompt, tool or agent code exists in the repository"
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "pure Go with no unsafe, cgo or binary parsing beyond bounded text procfs fields"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no RPC, broker, queue or webhook; the Podman REST client is covered by the local-IPC companion"
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+        "reason": "one shared principal, no tenants and no stored data beyond an in-memory ring buffer"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "no dependencies, CI, release or update mechanism in the repository"
+      },
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+        "reason": "this unit's boundary does not accept HTTP requests or authenticate"
+      },
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "this unit has no browser-side code path"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "this unit has no work-amplification or accumulation path distinct from its selected classes"
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "this unit has no deployment unit, secret store or configuration-precedence path"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-ingest",
+    "reviewed_paths": [
+      "main.go",
+      "podman.go",
+      "util.go"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-ingest",
+        "reviewed_paths": [
+          "podman.go",
+          "main.go"
+        ],
+        "invariant": "The Podman socket peer must be a trusted local endpoint: validSocket and candidates() must restrict which path is dialed and who owns it",
+        "method": "source",
+        "result": "validSocket (podman.go:214-224) Lstat-checks that the path is a real socket owned by root or the euid, with no symlink following. Candidates come only from the operator-set -podman-socket flag, XDG_RUNTIME_DIR (must be absolute) or the per-uid /run path. All of those are operator-controlled or in directories owned by the same user. A lower-trust local user cannot plant a socket at these paths. The Lstat-to-dial TOCTOU window requires write access to the same user's runtime directory, which is the same authority. Requests are GET only, with fixed paths and validated 64-hex IDs (runningIDs, validID), so no caller-supplied selectors reach the socket. Result is a hardening note only, with no boundary crossing.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-ingest",
+        "reviewed_paths": [
+          "podman.go",
+          "util.go"
+        ],
+        "invariant": "Podman-supplied strings (names, image, status, pod, ports, host_ip, protocol) must be bounded and neutralized before reaching the cached snapshot and JSON output, and the CLI fallback must take no injected data",
+        "method": "source",
+        "result": "toContainer and formatPort pass every free-text field through sanitize (util.go:54-72). sanitize makes the text valid UTF-8, replaces control characters, drops Cf format and bidi characters, and caps the rune count. Fields are length-capped (id 12, name 128, image 200, state 24, status 64, pod 128, port strings 64). Ports are capped at 16 per container and containers at 200. Numeric fields are typed numbers. Oversized or overflowing values (a huge Range or Created) do not panic and are only cosmetic. Output is JSON-encoded and rendered via textContent per the architecture, so there is no injection path. viaCLI (podman.go:351-368) uses a fixed argv, a filtered env, Dir=/ and a size-limited stdout buffer, so no request data reaches it. Responses are capped at 8 MiB (getJSON, limitedBuffer). Non-200 bodies are discarded after at most 4 KiB.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "assignment_priority": 5,
+    "assignment_rationale": "priority: unauthenticated/lowest-trust surfaces first, then credentials/deployment, then lower-trust data ingestion, then browser-side",
+    "hardening": [
+      "podman.go validSocket does the Lstat check and the later dial separately (check then use). It is not exploitable because the candidate paths live in operator-owned directories, but dialing and then checking peer credentials (SO_PEERCRED) would be descriptor-bound.",
+      "podman.go viaCLI resolves the podman binary through PATH at startup when -podman-bin is not set. Operators should pass an absolute -podman-bin in deployments where PATH is not trusted.",
+      "util.go sanitize does not strip Unicode line and paragraph separators (Zl/Zp). Harmless with textContent rendering, but they could matter if the output is ever used in logs or in a different rendering context."
+    ],
+    "bookkeeping_note": "unit-level reviewed_paths set to the union of check paths; unowned claimed paths dropped: []"
+  },
+  {
+    "coverage_id": "podman.go%23refresh%20lifecycle%20%28wake%2C%20lastAccess%2C%20cached%20snapshot%29::podman.go%23podmanClient::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Chained%20vulnerabilities%20and%20trust%20boundaries",
+    "canonical_refs": {
+      "surface": "podman.go#refresh lifecycle (wake, lastAccess, cached snapshot)",
+      "boundary": "podman.go#podmanClient",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries"
+    },
+    "surface": "podman.go#refresh lifecycle (wake, lastAccess, cached snapshot)",
+    "boundary": "podman.go#podmanClient",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Chained vulnerabilities and trust boundaries",
+    "starting_paths": [
+      "podman.go",
+      "metrics.go",
+      "server.go"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Chained vulnerabilities and trust boundaries",
+    "selected_companion_blocks": [
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Detached work after cancellation",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Retry storm and fail-open amplification",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Poison-record and head-of-line blocking",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Worker, pool, and priority starvation",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Universal moves",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model, prompt, tool or agent code exists in the repository"
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "pure Go with no unsafe, cgo or binary parsing beyond bounded text procfs fields"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no RPC, broker, queue or webhook; the Podman REST client is covered by the local-IPC companion"
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+        "reason": "one shared principal, no tenants and no stored data beyond an in-memory ring buffer"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "no dependencies, CI, release or update mechanism in the repository"
+      },
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+        "reason": "this unit's boundary does not accept HTTP requests or authenticate"
+      },
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "this unit has no browser-side code path"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "this unit has no local socket or privileged-file boundary"
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "this unit has no deployment unit, secret store or configuration-precedence path"
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "the app is read-only: it has no export, import, search, preview or webhook feature (server.go routes)"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-ingest",
+    "reviewed_paths": [
+      "main.go",
+      "podman.go",
+      "server.go"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-ingest",
+        "reviewed_paths": [
+          "podman.go",
+          "server.go",
+          "main.go"
+        ],
+        "invariant": "Request volume must not amplify Podman work, and a single unauthenticated peer must not trigger refreshes",
+        "method": "source",
+        "result": "A single run goroutine (main.go:165) performs all refreshes. Snapshot() (podman.go:182) is called only from the /api/state handler (server.go:340), which sits behind auth. It stores lastAccess and does a non-blocking send on the 1-buffered wake channel. At most one refresh is therefore pending or running regardless of request rate, and refreshes are serialized. The ticker refreshes only while a caller has been seen in the last 60 s. A stale snapshot triggers at most one extra refresh per cycle. A Podman failure is retried at most every 5 s, or once per wake, with no unbounded retry, and the log is written only when the error message changes. Unauthenticated peers cannot reach Snapshot, so they cannot keep polling alive.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-ingest",
+        "reviewed_paths": [
+          "podman.go"
+        ],
+        "invariant": "A slow or hostile Podman peer must not wedge the refresh loop, leak resources, or leave a torn or poisoned snapshot",
+        "method": "source",
+        "result": "refresh wraps its work in a 25 s context timeout. The socket client sets ResponseHeaderTimeout to 15 s and DisableKeepAlives, and its idle connections are closed on return. Body reads are bounded to 8 MiB under that context. CLI execution uses exec.CommandContext with WaitDelay=2s, so a hung child is killed. A malformed JSON response returns an error and falls back to the CLI, or stores an error snapshot, and the next tick retries. This is not a persistent poison-record loop, since the failure is not sticky and the data is re-fetched each cycle. store() replaces the whole snapshot under the mutex, and readers copy the struct by value. The Containers slice is never mutated after publication, so there is no torn read. The error snapshot has a nonzero UpdatedAt and Available=false, so stale data is not served as live data. A stats failure degrades to no stats only. Result: no chain from a container-controlled string or response to availability or a trust-boundary effect.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "assignment_priority": 7,
+    "assignment_rationale": "priority: unauthenticated/lowest-trust surfaces first, then credentials/deployment, then lower-trust data ingestion, then browser-side",
+    "hardening": [],
+    "bookkeeping_note": "unit-level reviewed_paths set to the union of check paths; unowned claimed paths dropped: [\"metrics.go\"]"
+  },
+  {
+    "coverage_id": "server.go%23GET%20%2Fapi%2Fstate%2C%20GET%20%2Fapi%2Fhistory%2C%20GET%20%2F%20%28Basic-auth%20entry%29::server.go%23authed::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Access%20control",
+    "canonical_refs": {
+      "surface": "server.go#GET /api/state, GET /api/history, GET / (Basic-auth entry)",
+      "boundary": "server.go#authed",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Access control"
+    },
+    "surface": "server.go#GET /api/state, GET /api/history, GET / (Basic-auth entry)",
+    "boundary": "server.go#authed",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Access control",
+    "starting_paths": [
+      "server.go",
+      "main.go",
+      "podmon_test.go"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Access control",
+    "selected_companion_blocks": [
+      "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+      "WEB-PROTOCOL-AND-AUTH.md#Host and forwarded-header trust",
+      "WEB-PROTOCOL-AND-AUTH.md#Cache deception and private-response caching",
+      "WEB-PROTOCOL-AND-AUTH.md#API-key exposure and unsafe transport",
+      "WEB-PROTOCOL-AND-AUTH.md#Response-header injection",
+      "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+      "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model, prompt, tool or agent code exists in the repository"
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "pure Go with no unsafe, cgo or binary parsing beyond bounded text procfs fields"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no RPC, broker, queue or webhook; the Podman REST client is covered by the local-IPC companion"
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+        "reason": "one shared principal, no tenants and no stored data beyond an in-memory ring buffer"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "no dependencies, CI, release or update mechanism in the repository"
+      },
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "this unit has no browser-side code path"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "this unit has no work-amplification or accumulation path distinct from its selected classes"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "this unit has no local socket or privileged-file boundary"
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "this unit has no deployment unit, secret store or configuration-precedence path"
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "the app is read-only: it has no export, import, search, preview or webhook feature (server.go routes)"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-auth-http",
+    "reviewed_paths": [
+      "main.go",
+      "server.go"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-auth-http",
+        "reviewed_paths": [
+          "server.go",
+          "main.go"
+        ],
+        "invariant": "Every route except GET /healthz reaches its handler only through authed(); no parallel unauthenticated door to /api/state, /api/history or static assets",
+        "method": "source",
+        "result": "handler() wraps /api/state, /api/history and the catch-all 'GET /' in a.authed. authed is a no-op only when cfg.noAuth, and loadConfig allows that only for loopback listen addresses with no password configured. /healthz returns a constant 'ok'. Non-GET methods get a mux 405 and path-cleaning redirects happen before any handler. Neither returns data. serveStatic does an exact map lookup on r.URL.Path, with no filesystem path built. http.ServeContent only serves the in-memory bytes.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-auth-http",
+        "reviewed_paths": [
+          "server.go"
+        ],
+        "invariant": "Credential check binds user and password, compares in constant time, and the 'ok' flag cannot be bypassed",
+        "method": "source",
+        "result": "checkCreds hashes user and pass with SHA-256 and runs two subtle.ConstantTimeCompare calls, with no short-circuit. Both must match (u&p==1). r.BasicAuth() failure or a missing header gives 401. There is no alternate credential path, cookie, token or header override.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-auth-http",
+        "reviewed_paths": [
+          "server.go",
+          "main.go"
+        ],
+        "invariant": "Host header, forwarded headers, caching and response headers do not create a trust decision that changes identity or discloses private data",
+        "method": "source",
+        "result": "Host is used only by the optional allowlist, hostCheck. No Forwarded or X-Forwarded-* header is read anywhere. clientKey uses RemoteAddr only. No Location or Set-Cookie header is built from request data. The only request-derived text in a header is none (Retry-After is numeric, WWW-Authenticate is constant). /api/* gets Cache-Control: no-store, and static assets get no-cache and contain no secrets. The Basic credential is never logged or echoed.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "assignment_priority": 1,
+    "assignment_rationale": "priority: unauthenticated/lowest-trust surfaces first, then credentials/deployment, then lower-trust data ingestion, then browser-side",
+    "hardening": [
+      "server.go: ServeMux answers the 405/301 path-cleaning responses for non-GET methods and unclean paths before authentication. These responses are body-less or fixed and disclose nothing sensitive."
+    ],
+    "bookkeeping_note": "unit-level reviewed_paths set to the union of check paths; unowned claimed paths dropped: [\"podmon_test.go\"]"
+  },
+  {
+    "coverage_id": "server.go%23authed%20lockout%20sequence%20%28blocked%2C%20checkCreds%2C%20fail%29%20under%20concurrent%20requests::server.go%23failLimiter%20and%20server.go%23authed::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Business%20logic",
+    "canonical_refs": {
+      "surface": "server.go#authed lockout sequence (blocked, checkCreds, fail) under concurrent requests",
+      "boundary": "server.go#failLimiter and server.go#authed",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Business logic"
+    },
+    "surface": "server.go#authed lockout sequence (blocked, checkCreds, fail) under concurrent requests",
+    "boundary": "server.go#failLimiter and server.go#authed",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Business logic (check-then-act race in brute-force lockout)",
+    "starting_paths": [
+      "server.go",
+      "podmon_test.go"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Business logic",
+    "selected_companion_blocks": [
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Quota-accounting scope and reset gaps",
+      "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "server-only logic"
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "no deployment path in this unit"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "no local socket in this unit"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "deferred",
+    "agent_id": null,
+    "reviewed_paths": [],
+    "local_checks": [],
+    "result_fingerprints": [],
+    "unresolved": [
+      "quick_profile_final_critic: Critic: companion to the reassigned failLimiter unit; the 5-try window may not be enforced for a concurrent burst because lockedUntil is set only after the fifth recorded failure."
+    ]
+  },
+  {
+    "coverage_id": "server.go%23unauthenticated%20request%20path%20%28limit%2C%20failLimiter%2C%20clientKey%29::server.go%23failLimiter::profile%2Fquick%2Fall-in-scope-subsystems::RESOURCE-EXHAUSTION-AND-AVAILABILITY.md%23Pre-authentication%20work%20imbalance",
+    "canonical_refs": {
+      "surface": "server.go#unauthenticated request path (limit, failLimiter, clientKey)",
+      "boundary": "server.go#failLimiter",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Pre-authentication work imbalance"
+    },
+    "surface": "server.go#unauthenticated request path (limit, failLimiter, clientKey)",
+    "boundary": "server.go#failLimiter",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Pre-authentication work imbalance",
+    "starting_paths": [
+      "server.go",
+      "main.go"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Business logic",
+    "selected_companion_blocks": [
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Pre-authentication work imbalance",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Unbounded buffering and cardinality",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Quota-accounting scope and reset gaps",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Worker, pool, and priority starvation",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Universal moves",
+      "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model, prompt, tool or agent code exists in the repository"
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "pure Go with no unsafe, cgo or binary parsing beyond bounded text procfs fields"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no RPC, broker, queue or webhook; the Podman REST client is covered by the local-IPC companion"
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+        "reason": "one shared principal, no tenants and no stored data beyond an in-memory ring buffer"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "no dependencies, CI, release or update mechanism in the repository"
+      },
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+        "reason": "this unit's boundary does not accept HTTP requests or authenticate"
+      },
+      {
+        "block": "CLIENT-SIDE.md#Core discipline",
+        "reason": "this unit has no browser-side code path"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "this unit has no local socket or privileged-file boundary"
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "this unit has no deployment unit, secret store or configuration-precedence path"
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "the app is read-only: it has no export, import, search, preview or webhook feature (server.go routes)"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [
+      {
+        "wave": 1,
+        "status": "covered",
+        "agent_id": "hunter-auth-http",
+        "reviewed_paths": [
+          "main.go",
+          "server.go"
+        ],
+        "local_checks": [
+          {
+            "agent_id": "hunter-auth-http",
+            "reviewed_paths": [
+              "server.go",
+              "main.go"
+            ],
+            "invariant": "Pre-auth work per request is bounded and cannot retain a shared slot past a deadline",
+            "method": "source",
+            "result": "Pre-auth cost is one SHA-256 pair over at most 16 KiB of header (MaxHeaderBytes), a mutex-guarded map lookup, and a 401. ReadHeaderTimeout 5s, ReadTimeout 10s, WriteTimeout 15s and IdleTimeout 60s bound how long the semaphore slot (64) can be held. The slot is taken only after headers are parsed, so slowloris connections do not consume it. There are no bodies, decompression, upstream calls or per-request allocations that grow.",
+            "artifact": null
+          },
+          {
+            "agent_id": "hunter-auth-http",
+            "reviewed_paths": [
+              "server.go"
+            ],
+            "invariant": "failLimiter memory and cardinality are bounded, and accounting cannot be cheaply escaped or abused",
+            "method": "source",
+            "result": "The map is capped at authMaxKeys (4096). purge() is O(cap) and runs only when a new key is inserted while full. Keys are IPv4 strings or IPv6 /64 prefixes. Failures are counted only when an Authorization header is present. Success resets the key. The residual issues are hardening only (see the hardening list): lockout evicted under key churn, and shared-key lockout behind a reverse proxy.",
+            "artifact": null
+          }
+        ],
+        "result_fingerprints": [],
+        "unresolved": [],
+        "reassignment_reason": "Critic: the limiter conclusion examined cardinality and purge but not atomicity. authed() calls blocked(key) (server.go:204), then checkCreds (:210), then fail(key) (:211), taking the mutex separately; lockedUntil is set only inside fail() after the 5th recorded failure, so up to 64 concurrent requests from one peer can pass blocked() before any lockout is visible. TestLockout is sequential. Reset-on-success and header-only counting are also unexamined."
+      }
+    ],
+    "wave": 2,
+    "status": "deferred",
+    "agent_id": null,
+    "reviewed_paths": [],
+    "local_checks": [],
+    "result_fingerprints": [],
+    "unresolved": [
+      "quick_profile_final_critic: Critic: the limiter conclusion examined cardinality and purge but not atomicity. authed() calls blocked(key) (server.go:204), then checkCreds (:210), then fail(key) (:211), taking the mutex separately; lockedUntil is set only inside fail() after the 5th recorded failure, so up to 64 concurrent requests from one peer can pass blocked() before any lockout is visible. TestLockout is sequential. Reset-on-success and header-only counting are also unexamined."
+    ],
+    "assignment_priority": 2,
+    "assignment_rationale": "priority: unauthenticated/lowest-trust surfaces first, then credentials/deployment, then lower-trust data ingestion, then browser-side",
+    "hardening": [
+      "server.go failLimiter keys on RemoteAddr only. If podmon is run behind a reverse proxy (README suggests -allowed-hosts for that case), every client shares the proxy address, so five bad guesses from anyone lock out the legitimate user for five minutes (the lockout check precedes credential verification). Consider documenting it, or an optional trusted-proxy flag.",
+      "server.go failLimiter.purge deletes arbitrary entries, including actively locked-out keys, once 4096 keys are held. An attacker with many source keys (for example many IPv6 /64 prefixes) can evict lockouts. The practical gain is small because a 12+ character password is required and each key gets only 5 tries per window.",
+      "server.go limit() only bounds in-flight handlers (64) and not accepted TCP connections. There is no cap on connections or per-IP connections. With MemoryMax=96M in the unit, a very large number of idle connections could OOM the process (restarted after 5s). This is plain volumetric exposure on a LAN service and needs sustained volume, so it is not reported as a finding.",
+      "server.go: the shared 64-slot semaphore sits after hostCheck but before auth, so an unauthenticated flood can return 503 to the legitimate user. Handlers are cheap, so this is volumetric only."
+    ]
+  },
+  {
+    "coverage_id": "web%2Fapp.js%23rendering%20of%20%2Fapi%2Fstate%20fields%20into%20the%20DOM::web%2Fapp.js%23h::profile%2Fquick%2Fall-in-scope-subsystems::CLIENT-SIDE.md%23DOM-based%20XSS",
+    "canonical_refs": {
+      "surface": "web/app.js#rendering of /api/state fields into the DOM",
+      "boundary": "web/app.js#h",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "CLIENT-SIDE.md#DOM-based XSS"
+    },
+    "surface": "web/app.js#rendering of /api/state fields into the DOM",
+    "boundary": "web/app.js#h",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "DOM-based XSS",
+    "starting_paths": [
+      "web/app.js",
+      "web/index.html",
+      "podman.go",
+      "util.go"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [
+      "CLIENT-SIDE.md#Core discipline",
+      "CLIENT-SIDE.md#DOM-based XSS",
+      "CLIENT-SIDE.md#DOM clobbering",
+      "CLIENT-SIDE.md#Browser-storage disclosure and stale authorization",
+      "CLIENT-SIDE.md#Client-side navigation confusion",
+      "CLIENT-SIDE.md#Universal moves",
+      "CLIENT-SIDE.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model, prompt, tool or agent code exists in the repository"
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "pure Go with no unsafe, cgo or binary parsing beyond bounded text procfs fields"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no RPC, broker, queue or webhook; the Podman REST client is covered by the local-IPC companion"
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+        "reason": "one shared principal, no tenants and no stored data beyond an in-memory ring buffer"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "no dependencies, CI, release or update mechanism in the repository"
+      },
+      {
+        "block": "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+        "reason": "this unit's boundary does not accept HTTP requests or authenticate"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "this unit has no work-amplification or accumulation path distinct from its selected classes"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "this unit has no local socket or privileged-file boundary"
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "this unit has no deployment unit, secret store or configuration-precedence path"
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "the app is read-only: it has no export, import, search, preview or webhook feature (server.go routes)"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-browser",
+    "reviewed_paths": [
+      "podman.go",
+      "util.go",
+      "web/app.js",
+      "web/index.html"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-browser",
+        "reviewed_paths": [
+          "web/app.js",
+          "web/index.html"
+        ],
+        "invariant": "Every /api/state and /api/history field reaches the DOM only through textContent, text nodes or setAttribute, never through an HTML-parsing or string-evaluating sink",
+        "method": "source",
+        "result": "web/app.js has no innerHTML, outerHTML, insertAdjacentHTML, document.write, eval or Function. The helper h() uses textContent for 'text' and setAttribute for other props. The sv() helper uses setAttribute on SVG nodes. The strings c.name, c.image, c.pod, c.ports, c.status, d.mount, d.device, d.fsType, t.label, info.hostname, info.os, info.kernel, info.cpuModel and p.error go in through h({text}), textContent or document.title. All other values are numbers formatted via fmtBytes, fmtPct or fmtDuration. Server-supplied strings in class names are not attacker-controlled: kind is chosen from a fixed set in stateCell and levelClass returns fixed strings. The only data-derived attribute values are title (c.image, a percentage string) and data-label (fixed). h() could set an arbitrary attribute name, but all call sites pass fixed keys, so a data-controlled key never reaches it. No XSS sink is reachable.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-browser",
+        "reviewed_paths": [
+          "podman.go",
+          "util.go"
+        ],
+        "invariant": "Container and host free-text is validated and bounded before it reaches the browser (defence in depth)",
+        "method": "source",
+        "result": "toContainer in podman.go applies sanitize() to Name (128 runes), Image (200), State (24), Status (64), Pod (128) and ID (12), and formatPort output is sanitized to 64 runes. sanitize in util.go converts invalid UTF-8, replaces control characters, drops Cf format characters (bidi) and caps length. It does not escape HTML, but the sinks are text-only, so that does not matter. Ports is initialised as []string{}, so c.ports.length in app.js cannot hit a null slice.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-browser",
+        "reviewed_paths": [
+          "web/app.js",
+          "web/index.html"
+        ],
+        "invariant": "No DOM clobbering, storage disclosure or navigation sinks",
+        "method": "source",
+        "result": "Dynamic elements get no id or name from data (h() is called only with fixed keys). All $(id) lookups target static ids in index.html. localStorage holds only the 'podmon.showStopped' flag ('1' or '0'), read as a strict === '1' comparison. No credentials or API responses are stored. No location, href, window.open, postMessage or anchor elements are built from data, and there is no URL source such as location.hash or document.referrer. fetch() uses fixed same-origin paths. CSP script-src 'self' without inline scripts backs this up.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "assignment_priority": 8,
+    "assignment_rationale": "priority: unauthenticated/lowest-trust surfaces first, then credentials/deployment, then lower-trust data ingestion, then browser-side",
+    "hardening": [
+      "web/app.js h() passes any props key to setAttribute. All current call sites use fixed keys, but a future call that passes data-derived keys or an on* attribute name would be unsafe. The CSP (no inline handlers) would block event-handler attributes today.",
+      "web/app.js tick() does not handle 403 from hostCheck or 429 from the limiter specially. They show as generic 'offline', which is an availability or UX issue only."
+    ],
+    "bookkeeping_note": "unit-level reviewed_paths set to the union of check paths; unowned claimed paths dropped: []"
+  },
+  {
+    "coverage_id": "web%2Findex.html%2C%20web%2Fstyle.css%20and%20server.go%23securityHeaders%20%28embedded%20assets%20and%20response%20headers%29::server.go%23contentSecurityPolicy%20and%20server.go%23loadStatic::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Wildcard",
+    "canonical_refs": {
+      "surface": "web/index.html, web/style.css and server.go#securityHeaders (embedded assets and response headers)",
+      "boundary": "server.go#contentSecurityPolicy and server.go#loadStatic",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Wildcard"
+    },
+    "surface": "web/index.html, web/style.css and server.go#securityHeaders (embedded assets and response headers)",
+    "boundary": "server.go#contentSecurityPolicy and server.go#loadStatic",
+    "subsystem": "profile/quick/all-in-scope-subsystems",
+    "attack_class": "Wildcard",
+    "starting_paths": [
+      "server.go",
+      "web/index.html",
+      "web/style.css",
+      "web/app.js",
+      "main.go"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Wildcard",
+    "selected_companion_blocks": [
+      "CLIENT-SIDE.md#Core discipline",
+      "CLIENT-SIDE.md#Clickjacking",
+      "CLIENT-SIDE.md#Credentialed CORS trust",
+      "CLIENT-SIDE.md#Universal moves",
+      "CLIENT-SIDE.md#Validation rules",
+      "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+      "WEB-PROTOCOL-AND-AUTH.md#Cache deception and private-response caching",
+      "WEB-PROTOCOL-AND-AUTH.md#Response-header injection",
+      "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+      "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no model, prompt, tool or agent code exists in the repository"
+      },
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "pure Go with no unsafe, cgo or binary parsing beyond bounded text procfs fields"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no RPC, broker, queue or webhook; the Podman REST client is covered by the local-IPC companion"
+      },
+      {
+        "block": "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+        "reason": "one shared principal, no tenants and no stored data beyond an in-memory ring buffer"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "no dependencies, CI, release or update mechanism in the repository"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "this unit has no work-amplification or accumulation path distinct from its selected classes"
+      },
+      {
+        "block": "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+        "reason": "this unit has no local socket or privileged-file boundary"
+      },
+      {
+        "block": "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+        "reason": "this unit has no deployment unit, secret store or configuration-precedence path"
+      },
+      {
+        "block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+        "reason": "the app is read-only: it has no export, import, search, preview or webhook feature (server.go routes)"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "hunter-browser",
+    "reviewed_paths": [
+      "main.go",
+      "server.go",
+      "web/index.html",
+      "web/style.css"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "hunter-browser",
+        "reviewed_paths": [
+          "server.go",
+          "web/index.html"
+        ],
+        "invariant": "Response headers (CSP, framing, nosniff, cache) are effective and consistent with the embedded assets",
+        "method": "source",
+        "result": "securityHeaders sets, on every response, CSP default-src 'none'; script-src 'self'; style-src 'self'; font-src/img-src/connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'. It also sets X-Frame-Options DENY, nosniff, Referrer-Policy no-referrer, COOP and CORP same-origin, and Cache-Control no-store on /api/*. index.html has one external script (/app.js), one stylesheet and no inline script, style or event handlers. app.js sets element.style properties (style.width, style.left, transitionDelay) through CSSOM, which style-src does not block. It sets no style attribute through setAttribute or markup. The header values are constants, with no request-derived data, so no header injection is possible. The app is read-only with no state-changing action, so framing is only a hardening matter, and frame-ancestors and DENY are set anyway. No CORS headers are emitted and CORP is same-origin, so there is no credentialed cross-origin read path.",
+        "artifact": null
+      },
+      {
+        "agent_id": "hunter-browser",
+        "reviewed_paths": [
+          "server.go",
+          "main.go",
+          "web/style.css"
+        ],
+        "invariant": "Static file serving uses an exact map lookup with no path construction, and unexpected asset types or private-response caching cannot occur",
+        "method": "source",
+        "result": "loadStatic walks the embed.FS rooted via fs.Sub(web) in main.go, and the map is keyed by '/'+path. serveStatic does a[r.URL.Path] with no filesystem path built, so no traversal, no directory listing and no suffix-based cache deception. Unknown extensions fail startup. Content-Type comes from a fixed extension table and nosniff is set. Static responses use Cache-Control no-cache with ServeContent validators, and they sit behind authed. The assets are public source and carry no secrets. The embedded fonts and style.css reference only same-origin /fonts/ URLs, and the files in web/ are the only embedded ones (index.html, app.js, style.css, favicon.svg, three woff2 files). API JSON responses carry no-store. Public-cache directives are absent, so there is no cache-deception condition within source.",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": [],
+    "assignment_priority": 9,
+    "assignment_rationale": "priority: unauthenticated/lowest-trust surfaces first, then credentials/deployment, then lower-trust data ingestion, then browser-side",
+    "hardening": [
+      "server.go securityHeaders does not set Cache-Control: no-store on authenticated static assets (they get no-cache, which still revalidates). Low value because the assets are public source.",
+      "server.go securityHeaders sets Strict-Transport-Security only when -tls-cert is set. Deployments behind a TLS-terminating proxy have to add it there (deployment fact outside source)."
+    ],
+    "bookkeeping_note": "unit-level reviewed_paths set to the union of check paths; unowned claimed paths dropped: [\"web/app.js\"]"
+  }
+]
