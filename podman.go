@@ -276,7 +276,7 @@ func getJSON(ctx context.Context, hc *http.Client, path string, out any) error {
 }
 
 func validID(id string) bool {
-	if len(id) != 64 {
+	if len(id) < 12 || len(id) > 64 {
 		return false
 	}
 	for _, r := range id {
@@ -516,4 +516,47 @@ func (p *podmanClient) store(s PodmanSnapshot, err error) {
 	if changed && msg != "" {
 		log.Printf("podman: %s", msg) // only on change, so a persistent failure does not flood the log
 	}
+}
+
+// validActions are the allowed container actions. Only socket-backed (not CLI) is supported.
+var validActions = map[string]struct{}{
+	"start":    {},
+	"stop":     {},
+	"restart":  {},
+	"pause":    {},
+	"unpause":  {},
+	"kill":     {},
+}
+
+// Action performs a container action via the Podman API socket.
+// Returns error if socket not available, action invalid, or API fails.
+func (p *podmanClient) Action(ctx context.Context, id, action string) error {
+	if !validID(id) {
+		return errors.New("invalid container ID")
+	}
+	if _, ok := validActions[action]; !ok {
+		return errors.New("invalid action")
+	}
+	sock := p.findSocket()
+	if sock == "" {
+		return errors.New("podman socket not available")
+	}
+	hc := newSocketClient(sock)
+	defer hc.CloseIdleConnections()
+
+	path := "/libpod/containers/" + id + "/" + action
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, "http://podman"+podmanAPIBase+path, nil)
+	if err != nil {
+		return err
+	}
+	resp, err := hc.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	io.Copy(io.Discard, io.LimitReader(resp.Body, 4096))
+	if resp.StatusCode >= 400 {
+		return fmt.Errorf("podman api returned HTTP %d", resp.StatusCode)
+	}
+	return nil
 }

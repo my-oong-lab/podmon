@@ -61,8 +61,11 @@ GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o pod
   through an SSH tunnel (`ssh -L 8080:127.0.0.1:8080 server`, and run podmon
   with `-listen 127.0.0.1:8080`) or a VPN such as WireGuard/Tailscale.
 - **Do not expose it to the internet.**
-- It is read-only: it cannot start, stop or change containers. Command lines,
-  environment variables, labels and mounts are never read or shown.
+- **Container actions:** Authenticated users can start, stop, restart, pause,
+  unpause, and kill containers. Actions are strictly routed through the Podman
+  API socket (never via CLI), container IDs are verified hex values, and
+  actions are logged. Command lines, environment variables, labels and mounts
+  are never read or shown.
 - Behind a reverse proxy, set `-allowed-hosts your.name` so only that Host
   header is accepted.
 - Failed logins are counted per client address. Behind a reverse proxy every

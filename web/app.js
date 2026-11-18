@@ -423,6 +423,7 @@
   const showStopped = $('showStopped');
   try { showStopped.checked = localStorage.getItem('podmon.showStopped') === '1'; } catch (e) { /* storage unavailable */ }
   let lastState = null;
+  let podmanHasSocket = false;
   showStopped.addEventListener('change', () => {
     try { localStorage.setItem('podmon.showStopped', showStopped.checked ? '1' : '0'); } catch (e) { /* ignore */ }
     if (lastState) renderContainers(lastState);
@@ -432,6 +433,67 @@
     const kind = c.state === 'running' ? '' : c.state === 'exited' || c.state === 'stopped' || c.state === 'created' ? 'stopped' : 'other';
     const label = c.state ? c.state.charAt(0).toUpperCase() + c.state.slice(1) : 'Unknown';
     return h('span', { class: 'state' }, h('span', { class: 'dot ' + kind, 'aria-hidden': 'true' }), h('span', { text: label }));
+  }
+
+  function renderActions(c) {
+    const actions = ['start', 'stop', 'restart', 'pause', 'unpause', 'kill'];
+    const state = c.state;
+    let allowed = [];
+
+    // Only show actions for non-infra containers when socket is available
+    if (!c.infra && podmanHasSocket) {
+      if (state === 'running') {
+        allowed = ['pause', 'restart', 'stop', 'kill'];
+      } else if (state === 'paused') {
+        allowed = ['unpause', 'restart', 'stop', 'kill'];
+      } else if (state === 'exited' || state === 'stopped' || state === 'created') {
+        allowed = ['start', 'restart'];
+      }
+    }
+
+    if (allowed.length === 0) {
+      return h('div', { class: 'act-group' });
+    }
+
+    const container = h('div', { class: 'act-group' });
+    const errNode = h('span', { class: 'act-err', hidden: true });
+
+    allowed.forEach((act) => {
+      const btn = h('button', {
+        class: 'act-btn act-' + act,
+        type: 'button',
+        'data-action': act,
+        'data-id': c.id,
+        text: act.charAt(0).toUpperCase() + act.slice(1)
+      });
+      btn.addEventListener('click', async () => {
+        // Disable all buttons in this row
+        container.querySelectorAll('.act-btn').forEach((b) => b.disabled = true);
+        errNode.hidden = true;
+        try {
+          const res = await fetch('/api/containers/' + c.id + '/' + act, {
+            method: 'POST',
+            credentials: 'same-origin',
+            cache: 'no-store'
+          });
+          if (!res.ok) {
+            const txt = await res.text();
+            throw new Error(txt || 'HTTP ' + res.status);
+          }
+          // Success: re-fetch state immediately
+          const st = await fetch('/api/state', { cache: 'no-store', credentials: 'same-origin' }).then(r => r.json());
+          render(st);
+        } catch (e) {
+          errNode.textContent = e.message;
+          errNode.hidden = false;
+          // Re-enable buttons on error
+          container.querySelectorAll('.act-btn').forEach((b) => b.disabled = false);
+        }
+      });
+      container.append(btn);
+    });
+    container.append(errNode);
+    return container;
   }
 
   function renderContainers(state) {
@@ -471,6 +533,7 @@
         portsCell.append(portList);
         const mem = c.hasStats && running ? fmtBytes(c.memUsage) : '–';
         const memTitle = c.hasStats && running && memTotal ? fmtPct((c.memUsage / memTotal) * 100) + ' of server memory' : null;
+        const actions = renderActions(c);
         return h('tr', null,
           nameCell,
           h('td', { 'data-label': 'Image' }, h('span', { class: 'ct-image', text: c.image, title: c.image })),
@@ -478,7 +541,8 @@
           h('td', { class: 'num', 'data-label': 'Processor', text: c.hasStats && running ? fmtPct(c.cpu) : '–' }),
           h('td', { class: 'num', 'data-label': 'Memory', text: mem, title: memTitle }),
           portsCell,
-          h('td', { 'data-label': 'Status', text: up }));
+          h('td', { 'data-label': 'Status', text: up }),
+          h('td', { class: 'ct-actions', 'data-label': 'Actions' }, actions));
       });
     $('ct-body').replaceChildren(...rows);
     table.hidden = rows.length === 0;
@@ -508,6 +572,7 @@
   function render(state) {
     lastState = state;
     if (!state.system) return;
+    podmanHasSocket = state.podman.hasStats;
     renderSystem(state.system);
     pushSample(state.system);
     charts.forEach((c) => c.update(store));

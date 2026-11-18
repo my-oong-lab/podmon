@@ -461,3 +461,37 @@ func TestLoadConfigEnvFile(t *testing.T) {
 		t.Errorf("password = %q, want %q", cfg.password, pw)
 	}
 }
+
+func TestContainerActionRoutingAndAuth(t *testing.T) {
+	a := testApp(t)
+
+	// Unauthenticated must fail
+	if w := do(a, "POST", "/api/containers/0123456789ab/restart", "", "", ""); w.Code != http.StatusUnauthorized {
+		t.Fatalf("unauthenticated action returned %d, want 401", w.Code)
+	}
+
+	// GET method not allowed
+	if w := do(a, "GET", "/api/containers/0123456789ab/restart", "admin", "correct-horse-battery", ""); w.Code != http.StatusMethodNotAllowed {
+		t.Fatalf("GET to action returned %d, want 405", w.Code)
+	}
+
+	// Invalid ID (too short)
+	if w := do(a, "POST", "/api/containers/short/restart", "admin", "correct-horse-battery", ""); w.Code != http.StatusBadRequest {
+		t.Fatalf("invalid short ID returned %d, want 400", w.Code)
+	}
+
+	// Invalid ID (non-hex characters)
+	if w := do(a, "POST", "/api/containers/0123456789zz/restart", "admin", "correct-horse-battery", ""); w.Code != http.StatusBadRequest {
+		t.Fatalf("invalid non-hex ID returned %d, want 400", w.Code)
+	}
+
+	// Invalid action
+	if w := do(a, "POST", "/api/containers/0123456789ab/destroy", "admin", "correct-horse-battery", ""); w.Code != http.StatusBadRequest {
+		t.Fatalf("invalid action returned %d, want 400", w.Code)
+	}
+
+	// No socket configured -> service unavailable (503)
+	if w := do(a, "POST", "/api/containers/0123456789ab/restart", "admin", "correct-horse-battery", ""); w.Code != http.StatusServiceUnavailable {
+		t.Fatalf("action with no socket returned %d, want 503", w.Code)
+	}
+}

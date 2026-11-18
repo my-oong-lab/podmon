@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/json"
@@ -112,6 +113,7 @@ func (a *app) handler() http.Handler {
 	})
 	mux.Handle("GET /api/state", a.authed(http.HandlerFunc(a.apiState)))
 	mux.Handle("GET /api/history", a.authed(http.HandlerFunc(a.apiHistory)))
+	mux.Handle("POST /api/containers/", a.authed(http.HandlerFunc(a.apiContainerAction)))
 	mux.Handle("GET /", a.authed(http.HandlerFunc(a.serveStatic)))
 	return a.recoverer(a.securityHeaders(a.hostCheck(a.limit(mux))))
 }
@@ -418,4 +420,56 @@ func (a *app) serveStatic(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", f.ctype)
 	w.Header().Set("Cache-Control", "no-cache")
 	http.ServeContent(w, r, "", a.started, bytes.NewReader(f.data))
+}
+
+func (a *app) apiContainerAction(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", "POST")
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	// Path is /api/containers/{id}/{action}
+	prefix := "/api/containers/"
+	if !strings.HasPrefix(r.URL.Path, prefix) {
+		http.NotFound(w, r)
+		return
+	}
+	rest := r.URL.Path[len(prefix):]
+	parts := strings.SplitN(rest, "/", 2)
+	if len(parts) != 2 {
+		http.Error(w, "bad request", http.StatusBadRequest)
+		return
+	}
+	id, action := parts[0], parts[1]
+
+	if !validID(id) {
+		http.Error(w, "invalid container ID", http.StatusBadRequest)
+		return
+	}
+	if _, ok := validActions[action]; !ok {
+		http.Error(w, "invalid action", http.StatusBadRequest)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
+	defer cancel()
+
+	if err := a.pm.Action(ctx, id, action); err != nil {
+		log.Printf("podman action %s %s: %v", action, id[:12], err)
+		var status int
+		switch {
+		case strings.Contains(err.Error(), "podman socket not available"):
+			status = http.StatusServiceUnavailable
+		case strings.Contains(err.Error(), "HTTP 404"):
+			status = http.StatusNotFound
+		case strings.Contains(err.Error(), "HTTP 409"):
+			status = http.StatusConflict
+		default:
+			status = http.StatusInternalServerError
+		}
+		http.Error(w, err.Error(), status)
+		return
+	}
+	log.Printf("podman action %s %s: ok", action, id[:12])
+	w.WriteHeader(http.StatusNoContent)
 }
